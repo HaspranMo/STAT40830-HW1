@@ -14,6 +14,10 @@ editor: visual
 
 This analysis presents the economic, social and environmental indicator data of three countries—Canada, New Zealand, Cuba.The objective is to examine how these nations differ in key development metrics over time.
 
+<!-- Added on 2025-6-17 -->
+
+This report explores cross-country development indicators.
+
 ## Motivation
 
 Chose Canada, New Zealand, and Cuba to highlight differences in regional development trajectories. Canada and New Zealand are high-income economies with stable growth, while Cuba offers a unique case.
