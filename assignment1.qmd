@@ -159,6 +159,10 @@ Cuba's fertilizer consumption stands out with values 5–10 times higher than th
 -   Cuba shows anomalies in fertilizer consumption—requires further investigation.
 -   Future work could expand the scope to include climate-related or education indicators across a broader set of countries.
 
+<!-- Added 2 by Jiye on 2025-06-17 -->
+
+GDP and life expectancy trends match global expectations.
+
 ## Custom Styling:
 
 Font style: applied via individuation.css
