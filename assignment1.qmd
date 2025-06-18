@@ -1,0 +1,164 @@
+---
+title: "STAT40830-assignment1"
+author: "Ye Ji"
+format:
+  revealjs:
+    slide-number: true
+    theme: simple
+    toc: true
+    css: individuation.css
+editor: visual
+---
+
+## Introduction
+
+This analysis presents the economic, social and environmental indicator data of three countries—Canada, New Zealand, Cuba.The objective is to examine how these nations differ in key development metrics over time.
+
+## Motivation
+
+Chose Canada, New Zealand, and Cuba to highlight differences in regional development trajectories. Canada and New Zealand are high-income economies with stable growth, while Cuba offers a unique case.
+
+The goal is to compare social and economic indicators in these diverse contexts.
+
+## Data Overview
+
+-   Total records: \~210,000.
+-   Time range: 1960–2023.
+-   Over 100 unique indicators per country.
+-   Format: country, year, indicator, value.
+
+## Code
+
+```{r}
+library(data.table)
+
+# Read CSVs and skip the first metadata row
+nzl <- fread("indicators_nzl.csv", skip = 1)
+can <- fread("indicators_can.csv", skip = 1)
+cub <- fread("indicators_cub.csv", skip = 1)
+
+# Add country label for grouping
+nzl[, Country := "New Zealand"]
+can[, Country := "Canada"]
+cub[, Country := "Cuba"]
+```
+
+### **Preprocess**
+
+```{r}
+# Merge into one table
+all_data <- rbindlist(list(nzl, can, cub))
+
+# Rename columns for clarity
+setnames(all_data, old = names(all_data), new = c("CountryName", "ISO3", "Year", "Indicator", "Code", "Value", "Country"))
+
+# Convert to correct types
+all_data[, Year := as.integer(Year)]
+all_data[, Value := as.numeric(Value)]
+
+```
+
+```{r}
+# List unique indicators
+head(unique(all_data$Indicator), 10)
+```
+
+**We select two key indicators(GDP per capita, Life expectancy at birth) for further analysis.**
+
+## GDP per Capita
+
+The following table shows the average GDP per capita for each country from 1960 to 2023.\
+This helps us identify long-term economic trends and differences in wealth levels across the selected countries.
+
+```{r}
+gdp <- all_data[Indicator == "GDP per capita (current US$)"]
+
+# Mean GDP per country and year
+gdp_summary <- gdp[, .(MeanGDP = mean(Value, na.rm = TRUE)), keyby = .(Country, Year)]
+gdp_summary
+
+```
+
+## Plot (GDP per Capita):
+
+This plot displays how GDP per capita has changed over time.
+
+```{r}
+library(ggplot2)
+
+ggplot(gdp, aes(x = Year, y = Value, color = Country)) +
+  geom_line(size = 1.2) +
+  labs(title = "GDP per Capita", y = "USD", x = "Year") +
+  theme_minimal()
+
+```
+
+## GDP Analysis
+
+-   Over the six-decade span, Canada maintains the highest GDP per capita, and Canada's consistent upward trajectory reflects stable economic growth, while Cuba exhibits both lower levels and greater variability.
+-   New Zealand closely follows but at a lower level.
+-   Cuba’s GDP per capita is significantly lower and more volatile.
+
+This reflects differences in political systems and access to international markets.
+
+## Life Expectancy at Birth
+
+Life expectancy is a core measure of population health.\
+The following table compares average life expectancy across the three countries.
+
+```{r}
+life <- all_data[Indicator == "Life expectancy at birth, total (years)"]
+
+# Summary statistics by country
+life[, .(AvgLife = mean(Value, na.rm=TRUE)), keyby = Country]
+
+```
+
+## Plot (Life Expectancy at Birth):
+
+This plot shows the evolution of life expectancy from 1960 to recent years.
+
+```{r}
+ggplot(life, aes(x = Year, y = Value, color = Country)) +
+  geom_line(size = 1.2) +
+  labs(title = "Life Expectancy at Birth", y = "Years", x = "Year") +
+  theme_light()
+
+```
+
+## Fertilizer Consumption
+
+This indicator reveals how intensively countries use fertilizers in agriculture.\
+Cuba shows extremely high usage, which may reflect policy differences or data irregularities.
+
+```{r}
+fert <- all_data[Indicator == "Fertilizer consumption (% of fertilizer production)"]
+
+fert[, .(MeanValue = mean(Value, na.rm=TRUE)), keyby = .(Country)]
+
+```
+
+## Plot (Fertilizer Consumption):
+
+```{r}
+ggplot(fert, aes(x = Year, y = Value, color = Country)) +
+  geom_line() +
+  labs(title = "Fertilizer Consumption", y = "% of production", x = "Year")
+
+```
+
+Cuba's fertilizer consumption stands out with values 5–10 times higher than the other countries.
+
+## Conclusion
+
+-   GDP and life expectancy trends match global expectations.
+-   Cuba shows anomalies in fertilizer consumption—requires further investigation.
+-   Future work could expand the scope to include climate-related or education indicators across a broader set of countries.
+
+## Custom Styling:
+
+Font style: applied via individuation.css
+
+Clean theme
+
+Slide numbers and TOC included
